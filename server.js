@@ -17,11 +17,11 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-// Date utilizatori
-// Parole simple
+// Date utilizatori (hardcodat, poți schimba după)
+// Parole simple, nu stocăm în clar, doar exemplu simplu
 const users = {
-  admin: { password: 'staffp4k', role: 'Admin' },
-  invitat: { password: 'viewp4k', role: 'Invitat' },
+  admin: { password: 'admin123', role: 'admin' },
+  invitat: { password: 'invitat123', role: 'viewer' },
 };
 
 // Serve frontend static files
