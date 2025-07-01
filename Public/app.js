@@ -1,70 +1,72 @@
-function loadSanctions() {
-  fetch('/api/data')
-    .then(res => res.json())
-    .then(data => renderTable(data, selectedCategory));
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('login-form');
+  const panel = document.getElementById('panel');
+  const btnLogin = document.getElementById('btn-login');
+  const btnLogout = document.getElementById('btn-logout');
+  const loginError = document.getElementById('login-error');
 
-let selectedCategory = 'adminJail'; // default
+  // Login
+  btnLogin.addEventListener('click', async () => {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-function changeCategory(category) {
-  selectedCategory = category;
-  loadSanctions();
-}
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username, password })
+    });
 
-function renderTable(data, category) {
-  const tableContainer = document.getElementById('table-container');
-  const entries = data[category];
-
-  if (!entries.length) {
-    tableContainer.innerHTML = "<p>Nu există sancțiuni în această categorie.</p>";
-    return;
-  }
-
-  const headers = Object.keys(entries[0]).filter(key => {
-    return !(category === "adminJail" && key === "Sanctiune");
+    const data = await res.json();
+    if (data.success) {
+      loginForm.classList.add('hidden');
+      panel.classList.remove('hidden');
+      loginError.textContent = '';
+      loadSanctions();
+    } else {
+      loginError.textContent = data.message || 'Eroare la login';
+    }
   });
 
-  let html = `
-    <table>
-      <thead>
-        <tr>
-          ${headers.map(k => `<th>${k}</th>`).join('')}
-          <th>Acțiuni</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${entries.map((entry, index) => `
-          <tr>
-            ${headers.map(k => `<td>${entry[k]}</td>`).join('')}
-            <td><button onclick="deleteSanction('${category}', ${index})">🗑️ Șterge</button></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+  // Logout
+  btnLogout.addEventListener('click', async () => {
+    await fetch('/logout', { method: 'POST' });
+    panel.classList.add('hidden');
+    loginForm.classList.remove('hidden');
+  });
 
-  tableContainer.innerHTML = html;
-}
+  // Încarcă sancțiuni și afișează în tabel
+  async function loadSanctions() {
+    const res = await fetch('/api/data');
+    if (res.status === 401) {
+      alert('Nu ești autentificat!');
+      panel.classList.add('hidden');
+      loginForm.classList.remove('hidden');
+      return;
+    }
+    const json = await res.json();
+    if (json.success) {
+      const data = json.data;
+      const container = document.getElementById('table-container');
+      container.innerHTML = '';
 
-function deleteSanction(category, index) {
-  if (!confirm('Ești sigur că vrei să ștergi această sancțiune?')) return;
+      for (const cat in data) {
+        const title = document.createElement('h4');
+        title.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        container.appendChild(title);
 
-  fetch('/api/delete', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ category, index })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert('Sancțiunea a fost ștearsă.');
-        loadSanctions();
-      } else {
-        alert('Eroare la ștergere.');
+        if (data[cat].length === 0) {
+          container.appendChild(document.createTextNode('Nicio sancțiune'));
+          continue;
+        }
+
+        const ul = document.createElement('ul');
+        data[cat].forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = JSON.stringify(item);
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
       }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadSanctions();
+    }
+  }
 });
