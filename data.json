@@ -1,0 +1,23 @@
+{
+  "adminJail": [
+    {
+      "id": "201727",
+      "nume": "vclau",
+      "sanctiune": "80 [Ninja Jack]",
+      "totalCP": 80,
+      "warn": false
+    }
+  ],
+  "ban": [
+    {
+      "tipBan": "permanent",
+      "id": "321",
+      "nume": "312",
+      "motiv": "Ninja Jack",
+      "durata": -1,
+      "dreptPlata": false
+    }
+  ],
+  "mute": [],
+  "avertismente": []
+}
