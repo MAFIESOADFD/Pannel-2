@@ -15,4 +15,8 @@ app.post('/api/delete', checkAuth, (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Serverul rulează pe portul ${PORT}`);
+
+  app.get('/', (req, res) => {
+  res.send('Serverul este pornit și funcționează corect!');
 });
+
