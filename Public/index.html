@@ -38,6 +38,10 @@
   <div id="table-container"></div>
 <script src="/app.js"></script>
 
+  app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 
   <script src="app.js"></script>
 </body>
