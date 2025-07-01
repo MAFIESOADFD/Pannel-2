@@ -1,22 +1,10 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
-const checkAuth = require('./checkAuth'); // middleware de autentificare, dacă ai
 
-app.use(bodyParser.json());
+app.use(express.static('public')); // Servește fișierele din folderul 'public'
 
-// rutele tale
-app.post('/api/delete', checkAuth, (req, res) => {
-  // logică aici
-  res.send('OK');
-});
+// alte rute API, middleware, autentificare, etc.
 
-app.get('/', (req, res) => {
-  res.send('Serverul este pornit și funcționează corect!');
-});
-
-// pornește serverul
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Serverul rulează pe portul ${PORT}`);
+app.listen(3000, () => {
+  console.log('Serverul rulează pe portul 3000');
 });
